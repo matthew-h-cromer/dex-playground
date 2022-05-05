@@ -6,7 +6,7 @@
   "scripts": {
     "node": "npx hardhat node",
     "deploy": "npx hardhat run --network localhost scripts/deploy.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "hardhat-deploy-ethers": "^0.3.0-beta.13"
   },
   "dependencies": {
+    "@openzeppelin/contracts": "^4.6.0",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v2-periphery": "^1.1.0-beta.0"
   }

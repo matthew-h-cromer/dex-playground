@@ -27,10 +27,17 @@ module.exports = {
       {
         version: '0.5.16',
       },
+      {
+        version: '0.8.0',
+      },
     ],
   },
   namedAccounts: {
     deployer: 0,
+    user1: 1,
+    user2: 2,
+    user3: 3,
+    user4: 4,
   },
   defaultNetwork: 'hardhat',
   networks: {
