@@ -4,7 +4,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
   // FACTORY
   const feeToSetter = deployer;
-  const factory = await deploy('UniswapV2Factory', {
+  await deploy('UniswapV2Factory', {
     from: deployer,
     args: [feeToSetter],
     log: true,
