@@ -17,4 +17,4 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     log: true,
   });
 };
-module.exports.tags = ['Uniswap Contracts'];
+module.exports.tags = ['Uniswap'];
