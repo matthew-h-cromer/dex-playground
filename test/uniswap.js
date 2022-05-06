@@ -12,7 +12,7 @@ describe('uniswap', () => {
   let router;
   let pair;
 
-  before(async () => {
+  beforeEach(async () => {
     await deployments.fixture(['Uniswap', 'Token0', 'Token1']);
 
     // accounts
@@ -34,14 +34,14 @@ describe('uniswap', () => {
 
     // add liquidity to the trading pair
     await router.addLiquidity(
-      token0.address,
-      token1.address,
-      10000000000000000000n,
-      10000000000000000000n,
-      10000000000000000000n,
-      10000000000000000000n,
-      deployer.address,
-      2000000000
+      token0.address, // tokenA
+      token1.address, // tokenB
+      10000000000000000000n, // amountADesired
+      10000000000000000000n, // amountBDesired
+      10000000000000000000n, // amountAMin
+      10000000000000000000n, // amountBMin
+      deployer.address, // to
+      2000000000 // deadline
     );
 
     // store the pair contract
@@ -65,13 +65,13 @@ describe('uniswap', () => {
 
     // remove liquidity
     await router.removeLiquidity(
-      token0.address,
-      token1.address,
-      9999999999999999000n,
-      1000000000000000000n,
-      1000000000000000000n,
-      deployer.address,
-      2000000000
+      token0.address, // tokenA
+      token1.address, // tokenB
+      9999999999999999000n, // liquidity
+      1000000000000000000n, // amountAMin
+      1000000000000000000n, // amountBMin
+      deployer.address, // to
+      2000000000 // deadline
     );
 
     // check liquidity
@@ -79,5 +79,23 @@ describe('uniswap', () => {
     expect(reserve0).to.equal('1000');
     expect(reserve1).to.equal('1000');
     expect(await pair.balanceOf(deployer.address)).to.equal('0');
+  });
+
+  it('swap', async () => {
+    // get some tokens
+    await token0.faucet(1000000000000000000n);
+
+    // swap
+    await router.swapExactTokensForTokens(
+      1000000000000000000n, // amountIn
+      0, // amountOutMin
+      [token0.address, token1.address], // path
+      deployer.address, // to
+      2000000000 // deadline
+    );
+
+    // check balances
+    expect(String(await token0.balanceOf(deployer.address))).to.equal('990000000000000000000');
+    expect(String(await token1.balanceOf(deployer.address))).to.equal('990906610893880149131');
   });
 });
