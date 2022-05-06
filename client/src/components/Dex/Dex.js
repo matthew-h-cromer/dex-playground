@@ -4,8 +4,9 @@ import TokenPrices from './TokenPrices';
 
 export default function () {
   const tokens = [
-    { symbol: 'A', value: 50, percentValue: 20 },
-    { symbol: 'B', value: 100, percentValue: 40 },
+    { symbol: 'T0', address: null, color: '#06d6a0', amount: 1, value: 0, percent: 5 },
+    { symbol: 'T1', address: null, color: '#ef476f', amount: 2, value: 0, percent: 5 },
+    { symbol: 'T0-T1', address: null, color: '#ffd166', amount: 3, value: 0, percent: 5 },
   ];
 
   return (
@@ -19,13 +20,13 @@ export default function () {
 
 const Container = styled.div`
   color: black;
-  background-color: #ededed;
+  background-color: #bfc8d6;
   width: 400px;
   border-radius: 8px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
+  row-gap: 2rem;
   padding: 1rem;
 `;
 

@@ -1,17 +1,16 @@
 import styled from 'styled-components';
 import TokenBalance from '../reusable/TokenBalances';
 import Actions from './Actions';
+import constTokens from '../../constants/tokens';
 
-export default function () {
-  const tokens = [
-    { symbol: 'A', value: 50, percentValue: 20 },
-    { symbol: 'B', value: 100, percentValue: 40 },
-  ];
+export default function ({ user = {} }) {
+  const { ETH, T0, T1, 'T0-T1': T0T1LP } = constTokens;
+  const tokens = [ETH, T0, T1, T0T1LP];
 
   return (
     <Container>
-      <Title>User</Title>
-      <TokenBalance tokens={tokens} />
+      <Title>{user.title}</Title>
+      <TokenBalance user={user} tokens={tokens} />
       <Actions />
     </Container>
   );
@@ -25,7 +24,7 @@ const Container = styled.div`
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
+  row-gap: 2rem;
   padding: 1rem;
 `;
 

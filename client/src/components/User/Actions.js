@@ -7,6 +7,7 @@ export default function () {
 
   return (
     <Container>
+      <Title>Actions</Title>
       <Row>
         <Select
           placeholder='select an action'
@@ -48,6 +49,7 @@ export default function () {
 }
 
 const Container = styled.div`
+  position: relative;
   background-color: white;
   border: 1px solid #d9d9d9;
   border-radius: 2px;
@@ -64,6 +66,14 @@ const Row = styled.div`
   justify-content: center;
   align-items: center;
   column-gap: 0.5rem;
+  color: #474747;
+  font-size: 12px;
+`;
+
+const Title = styled.div`
+  position: absolute;
+  top: -20px;
+  left: 0.5rem;
   color: #474747;
   font-size: 12px;
 `;

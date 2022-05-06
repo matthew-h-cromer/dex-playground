@@ -1,19 +1,13 @@
 import styled from 'styled-components';
-import VerticalProgress from './VerticalProgress';
+import Token from './Token';
 
-export default function ({ tokens }) {
-  const colors = ['#118ab2', '#06d6a0', '#ef476f', '#ffd166'];
-
+export default function ({ user, tokens }) {
   return (
     <Container>
       <Title>Token Balances</Title>
       <Row style={{}}>
         {tokens.map((token, index) => (
-          <VerticalProgress
-            percent={token.percentValue}
-            symbol={token.symbol}
-            color={colors[index]}
-          />
+          <Token user={user} token={token} />
         ))}
       </Row>
     </Container>
@@ -35,13 +29,12 @@ const Container = styled.div`
 const Row = styled.div`
   flex: 1;
   display: flex;
-  justify-content: center;
-  column-gap: 2rem;
+  justify-content: space-around;
 `;
 
 const Title = styled.div`
   position: absolute;
-  top: 0.5rem;
+  top: -20px;
   left: 0.5rem;
   color: #474747;
   font-size: 12px;
