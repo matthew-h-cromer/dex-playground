@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import TokenBalance from '../reusable/TokenBalances';
+import TokenBalance from '../reusable/TokenBalances/TokenBalances';
 import Actions from './Actions';
 import constTokens from '../../constants/tokens';
 

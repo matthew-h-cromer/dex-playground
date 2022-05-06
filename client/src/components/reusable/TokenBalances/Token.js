@@ -14,17 +14,14 @@ export default function ({ user = {}, token = {} }) {
   const getAmount = async () => {
     if (user.privateKey == null) return;
 
-    const wallet = new ethers.Wallet(
-      user.privateKey,
-      ethers.getDefaultProvider('http://127.0.0.1:8545/')
-    );
+    const provider = ethers.getDefaultProvider('http://127.0.0.1:8545/');
 
     let amount = 0;
-    console.log(symbol);
-    if (symbol === 'ETH') amount = ethers.utils.formatEther(await wallet.getBalance());
+    if (symbol === 'ETH')
+      amount = ethers.utils.formatEther(await provider.getBalance(user.address));
     else {
-      const tokenContract = new ethers.Contract(address, abi, wallet);
-      amount = ethers.utils.formatEther(await tokenContract.balanceOf(wallet.address));
+      const tokenContract = new ethers.Contract(address, abi, provider);
+      amount = ethers.utils.formatEther(await tokenContract.balanceOf(user.address));
     }
 
     setAmount(amount);

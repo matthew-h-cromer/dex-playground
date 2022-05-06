@@ -1,19 +1,20 @@
 import styled from 'styled-components';
-import TokenBalance from '../reusable/TokenBalances';
+import TokenBalance from '../reusable/TokenBalances/TokenBalances';
 import TokenPrices from './TokenPrices';
+import constTokens from '../../constants/tokens';
 
 export default function () {
-  const tokens = [
-    { symbol: 'T0', address: null, color: '#06d6a0', amount: 1, value: 0, percent: 5 },
-    { symbol: 'T1', address: null, color: '#ef476f', amount: 2, value: 0, percent: 5 },
-    { symbol: 'T0-T1', address: null, color: '#ffd166', amount: 3, value: 0, percent: 5 },
-  ];
+  const { T0, T1, 'T0-T1': T0T1LP } = constTokens;
+  const tokens = [T0, T1, T0T1LP];
 
   return (
     <Container>
       <Title>Dex</Title>
-      <TokenBalance tokens={tokens} />
-      <TokenPrices tokens={tokens} />
+      <TokenBalance
+        user={{ address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9' }}
+        tokens={tokens}
+      />
+      {/* <TokenPrices tokens={tokens} /> */}
     </Container>
   );
 }
