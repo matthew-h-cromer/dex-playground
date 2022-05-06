@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const { ethers, deployments } = require('hardhat');
 
 describe('token0', () => {
-  it('transfer', async () => {
+  it('faucet and transfer', async () => {
     await deployments.fixture(['Token0']);
 
     const [_, user1, user2] = await ethers.getSigners();
