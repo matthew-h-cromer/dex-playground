@@ -3,12 +3,15 @@ import styled from 'styled-components';
 import { ethers } from 'ethers';
 
 export default function ({ user = {}, token = {} }) {
-  const { symbol, address, abi, color, percent = 0 } = token;
+  const { symbol, address, abi, color } = token;
 
   const [amount, setAmount] = useState(0);
 
+  const percent = (amount / 10000) * 100;
+
   useEffect(() => {
     getAmount();
+    setInterval(getAmount, 1000);
   }, []);
 
   const getAmount = async () => {
@@ -63,6 +66,7 @@ const Progress = styled.div`
   position: absolute;
   width: 12px;
   height: ${({ percent }) => percent ?? '0'}%;
+  transition-duration: 1s;
   bottom: 0;
   left: 0;
   border-radius: 6px;

@@ -11,7 +11,7 @@ export default function ({ user = {} }) {
     <Container>
       <Title>{user.title}</Title>
       <TokenBalance user={user} tokens={tokens} />
-      <Actions />
+      <Actions user={user} />
     </Container>
   );
 }

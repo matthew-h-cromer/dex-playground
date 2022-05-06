@@ -1,9 +1,46 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Select, Button, Input, Divider } from 'antd';
+import { ethers } from 'ethers';
+import constTokens from '../../constants/tokens';
 
-export default function () {
+const { ETH, T0, T1, 'T0-T1': T0T1LP } = constTokens;
+
+export default function ({ user }) {
+  const [loading, setLoading] = useState(false);
   const [action, setAction] = useState(null);
+  const [token, setToken] = useState(null);
+  const [amount, setAmount] = useState(null);
+
+  const handleSendTx = async () => {
+    try {
+      setLoading(true);
+
+      const wallet = new ethers.Wallet(
+        user.privateKey,
+        ethers.getDefaultProvider('http://127.0.0.1:8545/')
+      );
+
+      switch (action) {
+        case 'faucet':
+          if (token === 'token0') {
+            const token0 = new ethers.Contract(T0.address, T0.abi, wallet);
+            await token0.faucet(amount);
+          }
+          if (token === 'token1') {
+            const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
+            await token1.faucet(amount);
+          }
+          break;
+        default:
+          return;
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Container>
@@ -20,7 +57,18 @@ export default function () {
         </Select>
       </Row>
       {action && <Divider style={{ margin: '6px 0' }} />}
-      {action == 'faucet' && <Input addonBefore='amount' />}
+      {action == 'faucet' && (
+        <>
+          <Select placeholder='select a token' onChange={v => setToken(v)}>
+            <Select.Option value='token0'>token0</Select.Option>
+            <Select.Option value='token1'>token1</Select.Option>
+          </Select>
+          <Input
+            addonBefore='amount'
+            onChange={e => setAmount(ethers.utils.parseEther(e.target.value))}
+          />
+        </>
+      )}
       {action == 'addLiquidity' && (
         <>
           <Input addonBefore='token0 amount' />
@@ -39,7 +87,12 @@ export default function () {
       )}
       {action && (
         <Row>
-          <Button style={{ marginLeft: 'auto' }} type='primary' size='small'>
+          <Button
+            loading={loading}
+            style={{ marginLeft: 'auto' }}
+            type='primary'
+            size='small'
+            onClick={handleSendTx}>
             Send Tx
           </Button>
         </Row>
