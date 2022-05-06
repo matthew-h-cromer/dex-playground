@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import TokenBalance from './TokenBalance';
-import { Input, Button } from 'antd';
+import TokenBalance from '../reusable/TokenBalances';
+import Actions from './Actions';
 
 export default function () {
   const tokens = [
@@ -10,38 +10,29 @@ export default function () {
 
   return (
     <Container>
-      <Title>Investor</Title>
+      <Title>User</Title>
       <TokenBalance tokens={tokens} />
-      <ButtonsContainer>
-        <Input />
-        <Button>Fund A and B</Button>
-      </ButtonsContainer>
+      <Actions />
     </Container>
   );
 }
 
 const Container = styled.div`
   color: black;
-  background-color: #fafafa;
-  height: 400px;
+  background-color: #ededed;
   width: 400px;
   border-radius: 8px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   display: flex;
   flex-direction: column;
-  padding: 0.5rem;
+  row-gap: 1rem;
+  padding: 1rem;
 `;
 
 const Title = styled.div`
   width: 100%;
   font-size: 18px;
+  font-weight: bold;
   line-height: 18px;
   text-align: center;
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 0.5rem 0.5rem 0rem 0.5rem;
-  column-gap: 0.5rem;
 `;

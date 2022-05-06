@@ -1,23 +1,22 @@
 import styled from 'styled-components';
-import VerticalProgress from './reusable/VerticalProgress';
 
 export default function ({ tokens }) {
   return (
     <Container>
       {tokens.map(token => (
-        <VerticalProgress percent={token.percentValue} />
+        <Balance>{`${token.symbol}: $${token.value}`}</Balance>
       ))}
     </Container>
   );
 }
 
 const Container = styled.div`
-  height: 100%;
-  width: 100%;
   display: flex;
   flex-direction: row;
+  padding: 0.5rem 0.5rem 0rem 0.5rem;
+  column-gap: 0.5rem;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
-  column-gap: 0.5rem;
 `;
+
+const Balance = styled.span``;

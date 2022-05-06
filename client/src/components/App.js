@@ -1,14 +1,12 @@
 import styled from 'styled-components';
-import User from './User';
-import Investor from './Investor';
-import Dex from './Dex';
+import User from './User/User';
+import Dex from './Dex/Dex';
 
 export default function () {
   return (
     <Container>
       <User />
       <Dex />
-      <Investor />
     </Container>
   );
 }
