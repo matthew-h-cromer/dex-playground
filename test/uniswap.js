@@ -18,6 +18,10 @@ describe('uniswap', () => {
     await token0.approve(router.address, 1000000000000000000000n);
     await token1.approve(router.address, 1000000000000000000000n);
 
+    // mint tokens to deployer
+    await token0.faucet(1000000000000000000000n);
+    await token1.faucet(1000000000000000000000n);
+
     // add liquidity to the trading pair
     await router.addLiquidity(
       token0.address,

@@ -3,10 +3,9 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
 
   // WETH
-  const initialSupply = '1000000000000000000000';
   const weth = await deploy('WETH', {
     from: deployer,
-    args: [initialSupply],
+    args: [],
     log: true,
   });
 
