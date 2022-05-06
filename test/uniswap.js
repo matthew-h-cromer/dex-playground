@@ -2,17 +2,27 @@ const { expect } = require('chai');
 const { ethers, deployments } = require('hardhat');
 
 describe('uniswap', () => {
-  it('add liquidity', async () => {
+  // accounts
+  let deployer;
+
+  // contracts
+  let token0;
+  let token1;
+  let factory;
+  let router;
+  let pair;
+
+  before(async () => {
     await deployments.fixture(['Uniswap', 'Token0', 'Token1']);
 
     // accounts
-    const [deployer] = await ethers.getSigners();
+    [deployer] = await ethers.getSigners();
 
     // contracts
-    const token0 = (await ethers.getContract('Token0')).connect(deployer);
-    const token1 = (await ethers.getContract('Token1')).connect(deployer);
-    const factory = (await ethers.getContract('UniswapV2Factory')).connect(deployer);
-    const router = (await ethers.getContract('UniswapV2Router02')).connect(deployer);
+    token0 = (await ethers.getContract('Token0')).connect(deployer);
+    token1 = (await ethers.getContract('Token1')).connect(deployer);
+    factory = (await ethers.getContract('UniswapV2Factory')).connect(deployer);
+    router = (await ethers.getContract('UniswapV2Router02')).connect(deployer);
 
     // approve router for tokens
     await token0.approve(router.address, 1000000000000000000000n);
@@ -34,14 +44,40 @@ describe('uniswap', () => {
       2000000000
     );
 
-    // check liquidity
+    // store the pair contract
     const pairAddress = await factory.getPair(token0.address, token1.address);
-    const pair = (await ethers.getContractAt('UniswapV2Pair', pairAddress)).connect(deployer);
+    pair = (await ethers.getContractAt('UniswapV2Pair', pairAddress)).connect(deployer);
+  });
+
+  it('add liquidity', async () => {
+    // check liquidity
     expect(await pair.token0()).to.equal(token0.address);
     expect(await pair.token1()).to.equal(token1.address);
     const [reserve0, reserve1] = await pair.getReserves();
     expect(reserve0).to.equal('10000000000000000000');
     expect(reserve1).to.equal('10000000000000000000');
     expect(await pair.balanceOf(deployer.address)).to.equal('9999999999999999000');
+  });
+
+  it('remove liquidity', async () => {
+    // approve router to remove liquidity
+    await pair.approve(router.address, '9999999999999999000');
+
+    // remove liquidity
+    await router.removeLiquidity(
+      token0.address,
+      token1.address,
+      9999999999999999000n,
+      1000000000000000000n,
+      1000000000000000000n,
+      deployer.address,
+      2000000000
+    );
+
+    // check liquidity
+    const [reserve0, reserve1] = await pair.getReserves();
+    expect(reserve0).to.equal('1000');
+    expect(reserve1).to.equal('1000');
+    expect(await pair.balanceOf(deployer.address)).to.equal('0');
   });
 });
