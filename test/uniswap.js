@@ -33,5 +33,15 @@ describe('uniswap', () => {
       deployer.address,
       2000000000
     );
+
+    // check liquidity
+    const pairAddress = await factory.getPair(token0.address, token1.address);
+    const pair = (await ethers.getContractAt('UniswapV2Pair', pairAddress)).connect(deployer);
+    expect(await pair.token0()).to.equal(token0.address);
+    expect(await pair.token1()).to.equal(token1.address);
+    const [reserve0, reserve1] = await pair.getReserves();
+    expect(reserve0).to.equal('10000000000000000000');
+    expect(reserve1).to.equal('10000000000000000000');
+    expect(await pair.balanceOf(deployer.address)).to.equal('9999999999999999000');
   });
 });
