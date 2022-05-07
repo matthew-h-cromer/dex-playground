@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import User from './User/User';
 import Dex from './Dex/Dex';
+import { Row, Col } from 'antd';
 
 export default function () {
   const users = [
@@ -18,10 +19,17 @@ export default function () {
 
   return (
     <Container>
-      {users.map(user => (
-        <User user={user} />
-      ))}
-      <Dex />
+      <Row gutter={24} justify='center'>
+        {users.map(user => (
+          <Col>
+            <User user={user} />
+          </Col>
+        ))}
+        <Col>
+          <Dex />
+        </Col>
+      </Row>
+      <Row></Row>
     </Container>
   );
 }
@@ -31,13 +39,6 @@ const Container = styled.div`
   color: white;
   height: 100vh;
   width: 100vw;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  column-gap: 1rem;
-  row-gap: 1rem;
-  padding: 1rem;
+  padding: 24px;
   box-sizing: border-box;
 `;

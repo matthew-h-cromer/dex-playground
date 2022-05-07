@@ -5,7 +5,7 @@ export default function ({ user, tokens }) {
   return (
     <Container>
       <Title>Token Balances</Title>
-      <Row style={{}}>
+      <Row>
         {tokens.map((token, index) => (
           <Token user={user} token={token} />
         ))}
@@ -17,7 +17,7 @@ export default function ({ user, tokens }) {
 const Container = styled.div`
   background-color: white;
   position: relative;
-  flex: 200px 1;
+  height: 200px;
   display: flex;
   flex-direction: column;
   padding: 0.5rem;

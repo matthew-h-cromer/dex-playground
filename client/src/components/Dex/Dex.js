@@ -1,28 +1,26 @@
 import styled from 'styled-components';
-import TokenBalance from '../reusable/TokenBalances/TokenBalances';
-import TokenPrices from './TokenPrices';
 import constTokens from '../../constants/tokens';
+import DexBalances from './DexBalances';
+import DexConstantProduct from './DexConstantProduct';
 
 export default function () {
-  const { T0, T1, 'T0-T1': T0T1LP } = constTokens;
-  const tokens = [T0, T1, T0T1LP];
+  const { T0, T1 } = constTokens;
+  const tokens = [T0, T1];
 
   return (
     <Container>
       <Title>Dex</Title>
-      <TokenBalance
-        user={{ address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9' }}
-        tokens={tokens}
-      />
-      {/* <TokenPrices tokens={tokens} /> */}
+      <DexBalances T0={T0} T1={T1} />
+      <DexConstantProduct T0={T0} T1={T1} />
     </Container>
   );
 }
 
 const Container = styled.div`
   color: black;
-  background-color: #bfc8d6;
+  background-color: #ededed;
   width: 400px;
+  min-height: 500px;
   border-radius: 8px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   display: flex;

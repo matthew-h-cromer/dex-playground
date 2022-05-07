@@ -3,14 +3,18 @@ import styled from 'styled-components';
 import { Select, Button, Input, Divider } from 'antd';
 import { ethers } from 'ethers';
 import constTokens from '../../constants/tokens';
+import constContracts from '../../constants/contracts';
 
 const { ETH, T0, T1, 'T0-T1': T0T1LP } = constTokens;
+const { ROUTER } = constContracts;
 
 export default function ({ user }) {
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState(null);
   const [token, setToken] = useState(null);
   const [amount, setAmount] = useState(null);
+  const [token0Amount, setToken0Amount] = useState(null);
+  const [token1Amount, setToken1Amount] = useState(null);
 
   const handleSendTx = async () => {
     try {
@@ -31,6 +35,24 @@ export default function ({ user }) {
             const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
             await token1.faucet(amount);
           }
+          break;
+        case 'addLiquidity':
+          const token0 = new ethers.Contract(T0.address, T0.abi, wallet);
+          const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
+          await token0.approve(ROUTER.address, token0Amount);
+          await token1.approve(ROUTER.address, token1Amount);
+
+          const router = new ethers.Contract(ROUTER.address, ROUTER.abi, wallet);
+          await router.addLiquidity(
+            T0.address, // tokenA
+            T1.address, // tokenB
+            token0Amount, // amountADesired
+            token1Amount, // amountBDesired
+            '0', // amountAMin
+            '0', // amountBMin
+            wallet.address, // to
+            2000000000 // deadline
+          );
           break;
         default:
           return;
@@ -71,8 +93,14 @@ export default function ({ user }) {
       )}
       {action == 'addLiquidity' && (
         <>
-          <Input addonBefore='token0 amount' />
-          <Input addonBefore='token1 amount' />
+          <Input
+            addonBefore='token0 amount'
+            onChange={e => setToken0Amount(ethers.utils.parseEther(e.target.value))}
+          />
+          <Input
+            addonBefore='token1 amount'
+            onChange={e => setToken1Amount(ethers.utils.parseEther(e.target.value))}
+          />
         </>
       )}
       {action == 'removeLiquidity' && <Input addonBefore='amount' />}
@@ -86,7 +114,7 @@ export default function ({ user }) {
         </>
       )}
       {action && (
-        <Row>
+        <Row style={{ marginTop: 'auto' }}>
           <Button
             loading={loading}
             style={{ marginLeft: 'auto' }}
@@ -103,6 +131,7 @@ export default function ({ user }) {
 
 const Container = styled.div`
   position: relative;
+  flex: 1;
   background-color: white;
   border: 1px solid #d9d9d9;
   border-radius: 2px;
