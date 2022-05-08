@@ -1,16 +1,15 @@
 import styled from 'styled-components';
-import TokenBalance from '../reusable/TokenBalances/TokenBalances';
+import TokenBalances from '../reusable/TokenBalances/TokenBalances';
 import Actions from './Actions';
-import constTokens from '../../constants/tokens';
+import { useRecoilValue } from 'recoil';
 
-export default function ({ user = {} }) {
-  const { ETH, T0, T1, 'T0-T1': T0T1LP } = constTokens;
-  const tokens = [ETH, T0, T1, T0T1LP];
+export default function ({ atom }) {
+  const user = useRecoilValue(atom);
 
   return (
     <Container>
       <Title>{user.title}</Title>
-      <TokenBalance user={user} tokens={tokens} />
+      <TokenBalances user={user} />
       <Actions user={user} />
     </Container>
   );

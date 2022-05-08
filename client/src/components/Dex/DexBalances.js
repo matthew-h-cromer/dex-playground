@@ -1,48 +1,32 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import constContracts from '../../constants/contracts';
-import { ethers } from 'ethers';
 import TokenDisplay from '../reusable/TokenBalances/TokenDisplay';
+import dexTokenBalances from '../../state/selectors/dexTokenBalances';
+import { useRecoilValueLoadable } from 'recoil';
 
-const { PAIR } = constContracts;
+export default function ({ dex }) {
+  const { contents } = useRecoilValueLoadable(dexTokenBalances);
 
-export default function ({ T0, T1 }) {
-  const [token0Amount, setToken0Amount] = useState(null);
-  const [token1Amount, setToken1Amount] = useState(null);
-
-  useEffect(() => {
-    getReserves();
-    setInterval(getReserves, 1000);
-  }, []);
-
-  const getReserves = async () => {
-    const provider = ethers.getDefaultProvider('http://127.0.0.1:8545/');
-
-    const pair = new ethers.Contract(PAIR.address, PAIR.abi, provider);
-
-    const reserves = await pair.getReserves();
-
-    const [t0Reserve, t1Reserve, blockTimestampLast] = reserves;
-
-    setToken0Amount(ethers.utils.formatEther(t0Reserve));
-    setToken1Amount(ethers.utils.formatEther(t1Reserve));
-  };
+  const { token0, token1 } = contents ?? {};
 
   return (
     <Container>
       <Title>Token Balances</Title>
       <Row>
         <TokenDisplay
-          percent={percent(token0Amount)}
-          color={T0.color}
-          symbol={T0.symbol}
-          amount={token0Amount}
+          token={{
+            color: dex.tokens.T0.color,
+            symbol: dex.tokens.T0.symbol,
+            amount: token0?.amount,
+            percent: token0?.percent,
+          }}
         />
         <TokenDisplay
-          percent={percent(token1Amount)}
-          color={T1.color}
-          symbol={T1.symbol}
-          amount={token1Amount}
+          token={{
+            color: dex.tokens.T1.color,
+            symbol: dex.tokens.T1.symbol,
+            amount: token1?.amount,
+            percent: token1?.percent,
+          }}
         />
       </Row>
     </Container>

@@ -1,17 +1,17 @@
 import styled from 'styled-components';
-import constTokens from '../../constants/tokens';
 import DexBalances from './DexBalances';
 import DexConstantProduct from './DexConstantProduct';
+import _dex from '../../state/atoms/dex';
+import { useRecoilValue } from 'recoil';
 
 export default function () {
-  const { T0, T1 } = constTokens;
-  const tokens = [T0, T1];
+  const dex = useRecoilValue(_dex);
 
   return (
     <Container>
       <Title>Dex</Title>
-      <DexBalances T0={T0} T1={T1} />
-      <DexConstantProduct T0={T0} T1={T1} />
+      <DexBalances dex={dex} />
+      <DexConstantProduct T0={dex.tokens.T0} T1={dex.tokens.T1} />
     </Container>
   );
 }

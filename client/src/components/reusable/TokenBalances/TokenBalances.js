@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import Token from './Token';
 
-export default function ({ user, tokens }) {
+export default function ({ user }) {
   return (
     <Container>
       <Title>Token Balances</Title>
       <Row>
-        {tokens.map((token, index) => (
+        {Object.values(user.tokens).map(token => (
           <Token user={user} token={token} />
         ))}
       </Row>

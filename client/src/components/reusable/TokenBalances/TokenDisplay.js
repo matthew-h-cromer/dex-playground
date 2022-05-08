@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export default function ({ percent, color, symbol, amount }) {
+export default function ({ token }) {
+  const { amount, percent, symbol, color } = token;
+
   return (
     <Container>
       <Bar>
