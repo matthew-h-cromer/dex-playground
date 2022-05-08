@@ -18,6 +18,7 @@ export default function ({ user }) {
   const [amount, setAmount] = useState(null);
   const [token0Amount, setToken0Amount] = useState(null);
   const [token1Amount, setToken1Amount] = useState(null);
+  const [swapDirection, setSwapDirection] = useState(null);
 
   const refreshT0 = useRecoilRefresher_UNSTABLE(
     userTokenBalance({ userAddress: user.address, tokenSymbol: 'T0' })
@@ -44,6 +45,8 @@ export default function ({ user }) {
       const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
       const router = new ethers.Contract(ROUTER.address, ROUTER.abi, wallet);
       const pair = new ethers.Contract(PAIR.address, PAIR.abi, wallet);
+
+      let receipt;
 
       switch (action) {
         case 'faucet':
@@ -93,6 +96,26 @@ export default function ({ user }) {
           refreshT1();
           refreshT0T1();
           refreshDex();
+          break;
+        case 'swap':
+          let path;
+          if (swapDirection === 't0->t1') {
+            path = [T0.address, T1.address];
+            await token0.approve(ROUTER.address, amount);
+          }
+          if (swapDirection === 't1->t0') {
+            path = [T1.address, T0.address];
+            await token1.approve(ROUTER.address, amount);
+          }
+          receipt = await router.swapExactTokensForTokens(
+            amount, // amountIn
+            '0', // amountOutMin
+            path, //path
+            wallet.address, // to
+            2000000000 // deadline
+          );
+          refreshT0();
+          refreshT1();
           break;
         default:
           return;
@@ -151,11 +174,14 @@ export default function ({ user }) {
       )}
       {action == 'swap' && (
         <>
-          <Select>
-            <Select.Option>token0 for token1</Select.Option>
-            <Select.Option>token1 for token0</Select.Option>
+          <Select placeholder='select swap direction' onChange={v => setSwapDirection(v)}>
+            <Select.Option value='t0->t1'>exact token0 for token1</Select.Option>
+            <Select.Option value='t1->t0'>exact token1 for token0</Select.Option>
           </Select>
-          <Input addonBefore='amount' />
+          <Input
+            addonBefore='amount'
+            onChange={e => setAmount(ethers.utils.parseEther(e.target.value))}
+          />
         </>
       )}
       {action && (
