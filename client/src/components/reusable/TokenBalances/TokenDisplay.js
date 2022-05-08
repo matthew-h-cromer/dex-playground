@@ -1,7 +1,21 @@
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 export default function ({ token }) {
-  const { amount, percent, symbol, color } = token;
+  const [_token, setToken] = useState(token);
+
+  useEffect(() => {
+    if (token == null) return;
+
+    setToken({
+      amount: token.amount ?? _token.amount,
+      percent: token.percent ?? _token.percent,
+      symbol: token.symbol ?? _token.symbol,
+      color: token.color ?? _token.color,
+    });
+  }, [token]);
+
+  const { amount, percent, symbol, color } = _token;
 
   return (
     <Container>
@@ -14,7 +28,7 @@ export default function ({ token }) {
 }
 
 const formatAmount = amount => {
-  if (amount == null) return '';
+  if (amount == null) return ' ';
 
   return parseFloat(amount).toFixed(1);
 };
@@ -47,4 +61,5 @@ const Progress = styled.div`
 
 const SubTitle = styled.div`
   white-space: pre-wrap;
+  width: 50px;
 `;

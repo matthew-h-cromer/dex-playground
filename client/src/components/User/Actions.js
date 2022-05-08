@@ -1,20 +1,34 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import { Select, Button, Input, Divider } from 'antd';
 import { ethers } from 'ethers';
 import constTokens from '../../constants/tokens';
 import constContracts from '../../constants/contracts';
+import { useRecoilRefresher_UNSTABLE } from 'recoil';
+import userTokenBalance from '../../state/selectors/userTokenBalance';
+import dexTokenBalances from '../../state/selectors/dexTokenBalances';
 
-const { ETH, T0, T1, 'T0-T1': T0T1LP } = constTokens;
+const { T0, T1 } = constTokens;
 const { ROUTER } = constContracts;
 
 export default function ({ user }) {
   const [loading, setLoading] = useState(false);
   const [action, setAction] = useState(null);
-  const [token, setToken] = useState(null);
+  const [tokenSymbol, setTokenSymbol] = useState(null);
   const [amount, setAmount] = useState(null);
   const [token0Amount, setToken0Amount] = useState(null);
   const [token1Amount, setToken1Amount] = useState(null);
+
+  const refreshT0 = useRecoilRefresher_UNSTABLE(
+    userTokenBalance({ userAddress: user.address, tokenSymbol: 'T0' })
+  );
+  const refreshT1 = useRecoilRefresher_UNSTABLE(
+    userTokenBalance({ userAddress: user.address, tokenSymbol: 'T1' })
+  );
+  const refreshT0T1 = useRecoilRefresher_UNSTABLE(
+    userTokenBalance({ userAddress: user.address, tokenSymbol: 'T0-T1' })
+  );
+  const refreshDex = useRecoilRefresher_UNSTABLE(dexTokenBalances);
 
   const handleSendTx = async () => {
     try {
@@ -27,13 +41,15 @@ export default function ({ user }) {
 
       switch (action) {
         case 'faucet':
-          if (token === 'token0') {
+          if (tokenSymbol === 'T0') {
             const token0 = new ethers.Contract(T0.address, T0.abi, wallet);
             await token0.faucet(amount);
+            refreshT0();
           }
-          if (token === 'token1') {
+          if (tokenSymbol === 'T1') {
             const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
             await token1.faucet(amount);
+            refreshT1();
           }
           break;
         case 'addLiquidity':
@@ -53,6 +69,11 @@ export default function ({ user }) {
             wallet.address, // to
             2000000000 // deadline
           );
+
+          refreshT0();
+          refreshT1();
+          refreshT0T1();
+          refreshDex();
           break;
         default:
           return;
@@ -81,9 +102,9 @@ export default function ({ user }) {
       {action && <Divider style={{ margin: '6px 0' }} />}
       {action == 'faucet' && (
         <>
-          <Select placeholder='select a token' onChange={v => setToken(v)}>
-            <Select.Option value='token0'>token0</Select.Option>
-            <Select.Option value='token1'>token1</Select.Option>
+          <Select placeholder='select a token' onChange={v => setTokenSymbol(v)}>
+            <Select.Option value='T0'>T0</Select.Option>
+            <Select.Option value='T1'>T1</Select.Option>
           </Select>
           <Input
             addonBefore='amount'

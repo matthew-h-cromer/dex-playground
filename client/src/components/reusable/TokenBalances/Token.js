@@ -3,7 +3,9 @@ import { useRecoilValueLoadable } from 'recoil';
 import TokenDisplay from './TokenDisplay';
 
 export default function ({ user, token }) {
-  const { contents } = useRecoilValueLoadable(userTokenBalance({ user, token }));
+  const { contents } = useRecoilValueLoadable(
+    userTokenBalance({ userAddress: user.address, tokenSymbol: token.symbol })
+  );
 
   const { amount, percent } = contents;
 
