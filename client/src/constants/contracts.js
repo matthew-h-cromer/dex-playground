@@ -1,4 +1,6 @@
-export default {
+import abiDecoder from 'abi-decoder';
+
+const contracts = {
   FACTORY: {
     address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
     abi: [
@@ -1888,3 +1890,6 @@ export default {
     ],
   },
 };
+export default contracts;
+
+Object.values(contracts).forEach(contract => abiDecoder.addABI(contract.abi));

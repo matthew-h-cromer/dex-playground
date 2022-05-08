@@ -9,7 +9,7 @@ export default function () {
 
   return (
     <Container>
-      <Title>Dex</Title>
+      <Title>T0-T1 Pair</Title>
       <DexBalances dex={dex} />
       <DexConstantProduct T0={dex.tokens.T0} T1={dex.tokens.T1} />
     </Container>

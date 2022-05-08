@@ -4,9 +4,11 @@ import { Select, Button, Input, Divider } from 'antd';
 import { ethers } from 'ethers';
 import constTokens from '../../constants/tokens';
 import constContracts from '../../constants/contracts';
-import { useRecoilRefresher_UNSTABLE } from 'recoil';
+import { useRecoilRefresher_UNSTABLE, useRecoilState } from 'recoil';
 import userTokenBalance from '../../state/selectors/userTokenBalance';
 import dexTokenBalances from '../../state/selectors/dexTokenBalances';
+import abiDecoder from 'abi-decoder';
+import _transactions from '../../state/atoms/transactions';
 
 const { T0, T1 } = constTokens;
 const { ROUTER, PAIR } = constContracts;
@@ -19,6 +21,8 @@ export default function ({ user }) {
   const [token0Amount, setToken0Amount] = useState(null);
   const [token1Amount, setToken1Amount] = useState(null);
   const [swapDirection, setSwapDirection] = useState(null);
+
+  const [transactions, setTransactions] = useRecoilState(_transactions);
 
   const refreshT0 = useRecoilRefresher_UNSTABLE(
     userTokenBalance({ userAddress: user.address, tokenSymbol: 'T0' })
@@ -51,11 +55,11 @@ export default function ({ user }) {
       switch (action) {
         case 'faucet':
           if (tokenSymbol === 'T0') {
-            await token0.faucet(amount);
+            send(await token0.faucet(amount));
             refreshT0();
           }
           if (tokenSymbol === 'T1') {
-            await token1.faucet(amount);
+            send(await token1.faucet(amount));
             refreshT1();
           }
           break;
@@ -63,15 +67,17 @@ export default function ({ user }) {
           await token0.approve(ROUTER.address, token0Amount);
           await token1.approve(ROUTER.address, token1Amount);
 
-          await router.addLiquidity(
-            T0.address, // tokenA
-            T1.address, // tokenB
-            token0Amount, // amountADesired
-            token1Amount, // amountBDesired
-            '0', // amountAMin
-            '0', // amountBMin
-            wallet.address, // to
-            2000000000 // deadline
+          send(
+            await router.addLiquidity(
+              T0.address, // tokenA
+              T1.address, // tokenB
+              token0Amount, // amountADesired
+              token1Amount, // amountBDesired
+              '0', // amountAMin
+              '0', // amountBMin
+              wallet.address, // to
+              2000000000 // deadline
+            )
           );
 
           refreshT0();
@@ -82,14 +88,16 @@ export default function ({ user }) {
         case 'removeLiquidity':
           await pair.approve(ROUTER.address, amount);
 
-          await router.removeLiquidity(
-            T0.address, // tokenA
-            T1.address, // tokenB
-            amount, // amount of liquidity to remove
-            '0', // amountAMin
-            '0', // amountBMin
-            wallet.address, // to
-            2000000000 // deadline
+          send(
+            await router.removeLiquidity(
+              T0.address, // tokenA
+              T1.address, // tokenB
+              amount, // amount of liquidity to remove
+              '0', // amountAMin
+              '0', // amountBMin
+              wallet.address, // to
+              2000000000 // deadline
+            )
           );
 
           refreshT0();
@@ -107,15 +115,18 @@ export default function ({ user }) {
             path = [T1.address, T0.address];
             await token1.approve(ROUTER.address, amount);
           }
-          receipt = await router.swapExactTokensForTokens(
-            amount, // amountIn
-            '0', // amountOutMin
-            path, //path
-            wallet.address, // to
-            2000000000 // deadline
+          send(
+            await router.swapExactTokensForTokens(
+              amount, // amountIn
+              '0', // amountOutMin
+              path, //path
+              wallet.address, // to
+              2000000000 // deadline
+            )
           );
           refreshT0();
           refreshT1();
+          refreshDex();
           break;
         default:
           return;
@@ -125,6 +136,23 @@ export default function ({ user }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const send = async tx => {
+    const sendReceipt = await tx;
+    const txReceipt = await sendReceipt.wait();
+
+    const decodedMethod = abiDecoder.decodeMethod(sendReceipt.data);
+    const decodedLogs = abiDecoder.decodeLogs(txReceipt.logs);
+
+    const record = {
+      transactionHash: txReceipt.transactionHash,
+      gasUsed: txReceipt.gasUsed,
+      ...decodedMethod,
+      logs: decodedLogs,
+    };
+
+    setTransactions([record, ...transactions]);
   };
 
   return (

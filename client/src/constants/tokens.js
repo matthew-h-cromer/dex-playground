@@ -1,4 +1,6 @@
-export default {
+import abiDecoder from 'abi-decoder';
+
+const tokens = {
   ETH: {
     symbol: 'ETH',
     color: '#264653',
@@ -1312,3 +1314,6 @@ export default {
     ],
   },
 };
+export default tokens;
+
+abiDecoder.addABI(tokens.T0.abi);
