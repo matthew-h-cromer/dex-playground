@@ -1,17 +1,15 @@
-# Basic Sample Hardhat Project
+# Uniswap Dex Playgound
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+This project runs a hardhat EVM chain, deploys ERC20 tokens and uniswap smart contracts, and provides a UI for interacting with them. When a transaction is mined, the data is rendered in the UI so parameters and logs can be read and understood. This is extremely useful for understanding how to interact with a dex, and provides an opportunity to play with scenarios pertaining to slippage, exchange rates, etc.
 
-Try running some of the following tasks:
+## To try it out, run the following commands
 
+In the project root:
 ```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-node scripts/sample-script.js
-npx hardhat help
+npm run node
 ```
 
-TODO: MAKE A NOTE OF THIS: https://forum.openzeppelin.com/t/uniswap-fork-testing-hardhat/14472/7
+In `/client`:
+```shell
+npm start
+```
