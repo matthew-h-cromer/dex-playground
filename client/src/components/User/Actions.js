@@ -9,7 +9,7 @@ import userTokenBalance from '../../state/selectors/userTokenBalance';
 import dexTokenBalances from '../../state/selectors/dexTokenBalances';
 
 const { T0, T1 } = constTokens;
-const { ROUTER } = constContracts;
+const { ROUTER, PAIR } = constContracts;
 
 export default function ({ user }) {
   const [loading, setLoading] = useState(false);
@@ -39,31 +39,50 @@ export default function ({ user }) {
         ethers.getDefaultProvider('http://127.0.0.1:8545/')
       );
 
+      // contracts
+      const token0 = new ethers.Contract(T0.address, T0.abi, wallet);
+      const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
+      const router = new ethers.Contract(ROUTER.address, ROUTER.abi, wallet);
+      const pair = new ethers.Contract(PAIR.address, PAIR.abi, wallet);
+
       switch (action) {
         case 'faucet':
           if (tokenSymbol === 'T0') {
-            const token0 = new ethers.Contract(T0.address, T0.abi, wallet);
             await token0.faucet(amount);
             refreshT0();
           }
           if (tokenSymbol === 'T1') {
-            const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
             await token1.faucet(amount);
             refreshT1();
           }
           break;
         case 'addLiquidity':
-          const token0 = new ethers.Contract(T0.address, T0.abi, wallet);
-          const token1 = new ethers.Contract(T1.address, T1.abi, wallet);
           await token0.approve(ROUTER.address, token0Amount);
           await token1.approve(ROUTER.address, token1Amount);
 
-          const router = new ethers.Contract(ROUTER.address, ROUTER.abi, wallet);
           await router.addLiquidity(
             T0.address, // tokenA
             T1.address, // tokenB
             token0Amount, // amountADesired
             token1Amount, // amountBDesired
+            '0', // amountAMin
+            '0', // amountBMin
+            wallet.address, // to
+            2000000000 // deadline
+          );
+
+          refreshT0();
+          refreshT1();
+          refreshT0T1();
+          refreshDex();
+          break;
+        case 'removeLiquidity':
+          await pair.approve(ROUTER.address, amount);
+
+          await router.removeLiquidity(
+            T0.address, // tokenA
+            T1.address, // tokenB
+            amount, // amount of liquidity to remove
             '0', // amountAMin
             '0', // amountBMin
             wallet.address, // to
@@ -124,7 +143,12 @@ export default function ({ user }) {
           />
         </>
       )}
-      {action == 'removeLiquidity' && <Input addonBefore='amount' />}
+      {action == 'removeLiquidity' && (
+        <Input
+          addonBefore='amount'
+          onChange={e => setAmount(ethers.utils.parseEther(e.target.value))}
+        />
+      )}
       {action == 'swap' && (
         <>
           <Select>
