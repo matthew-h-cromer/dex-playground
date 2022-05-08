@@ -2,6 +2,7 @@ import abiDecoder from 'abi-decoder';
 
 const contracts = {
   FACTORY: {
+    title: 'Uniswap Factory',
     address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
     abi: [
       {
@@ -198,6 +199,7 @@ const contracts = {
     ],
   },
   ROUTER: {
+    title: 'Uniswap Router',
     address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
     abi: [
       {
@@ -1174,6 +1176,7 @@ const contracts = {
     ],
   },
   PAIR: {
+    title: 'T0-T1 Pair',
     address: '0xBb81F2d49c8d3b0c52C750ba0aa2856c6aC0F0b2',
     abi: [
       {

@@ -2,10 +2,12 @@ import abiDecoder from 'abi-decoder';
 
 const tokens = {
   ETH: {
+    title: 'ETH Token',
     symbol: 'ETH',
     color: '#264653',
   },
   T0: {
+    title: 'T0 Token',
     symbol: 'T0',
     address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
     color: '#2a9d8f',
@@ -301,6 +303,7 @@ const tokens = {
     ],
   },
   T1: {
+    title: 'T1 Token',
     symbol: 'T1',
     address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
     color: '#e9c46a',
@@ -596,6 +599,7 @@ const tokens = {
     ],
   },
   'T0-T1': {
+    title: 'T0-T1 Pair',
     symbol: 'T0-T1',
     address: '0xBb81F2d49c8d3b0c52C750ba0aa2856c6aC0F0b2',
     color: '#e76f51',

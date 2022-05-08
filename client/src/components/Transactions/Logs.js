@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Table } from 'antd';
+import ParsedAddress from '../reusable/ParsedAddress';
 
 export default function ({ logs }) {
   const logColumns = [
@@ -15,7 +16,11 @@ export default function ({ logs }) {
 
   const eventColumns = [
     { title: 'name', dataIndex: 'name' },
-    { title: 'value', dataIndex: 'value' },
+    { title: 'type', dataIndex: 'type' },
+    {
+      title: 'value',
+      render: _ => (_.type === 'address' ? <ParsedAddress address={_.value} /> : _.value),
+    },
   ];
 
   return (
